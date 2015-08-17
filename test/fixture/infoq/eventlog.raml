@@ -11,23 +11,23 @@ schemas:
     eventListJson: !include eventListSchema.json
 
 securitySchemes:
-  oauth_2:
-    description: Eventlog uses OAuth2 security scheme only.
-    type: OAuth 2.0
-    describedBy:
-      headers:
-        Authorization:
-          type: string
-          description: A valid OAuth 2 access token.
-      responses:
-        401:
-          description: Bad or expired token.
-        403:
-          description: Bad OAuth request.
-    settings:
-      authorizationUri: http://eventlog.example.org/oauth2/authorize
-      accessTokenUri: http://eventlog.example.org/oauth2/token
-      authorizationGrants: [ credentials ]
+  - oauth_2_0:
+      description: Eventlog uses OAuth2 security scheme only.
+      type: OAuth 2.0
+      describedBy:
+        headers:
+          Authorization:
+            type: string
+            description: A valid OAuth 2 access token.
+        responses:
+          401:
+            description: Bad or expired token.
+          403:
+            description: Bad OAuth request.
+      settings:
+        authorizationUri: http://eventlog.example.org/oauth2/authorize
+        accessTokenUri: http://eventlog.example.org/oauth2/token
+        authorizationGrants: [ credentials ]
 
 
 resourceTypes:
@@ -77,7 +77,7 @@ traits:
   displayName: A Named Stream
   description: A stream is a collection of related events. A Named Stream has been defined by the user to contain a list of related events. Named Streams are created by POSTing an Event to a Named Stream.
   post:
-    securedBy: [ oauth_2 ]
+    securedBy: [ oauth_2_0 ]
     description: Create a new event in this stream.
     body:
       application/json:

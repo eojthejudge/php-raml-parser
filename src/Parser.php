@@ -328,16 +328,20 @@ class Parser
     /**
      * Parse the security settings
      *
-     * @param $securitySchemes
+     * @param $schemesArray
      *
      * @return array
      */
-    private function parseSecuritySettings($securitySchemes)
+    private function parseSecuritySettings($schemesArray)
     {
-        foreach ($securitySchemes as $key => $securityScheme) {
-            if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
-                $parser = $this->securitySettingsParsers[$securityScheme['type']];
-                $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+        $securitySchemes = [];
+        foreach ($schemesArray as $securitySchemeData) {
+            foreach ($securitySchemeData as $key => $securityScheme) {
+                if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                    $securitySchemes[$key] = $securityScheme;
+                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+                }
             }
         }
         return $securitySchemes;
@@ -648,7 +652,7 @@ class Parser
                 '/<<(' . $variables . ')([\s]*\|[\s]*!(singularize|pluralize))?>>/',
                 function ($matches) use ($values) {
                     $transformer = isset($matches[3]) ? $matches[3] : '';
-                    switch($transformer) {
+                    switch ($transformer) {
                         case 'singularize':
                             return Inflect::singularize($values[$matches[1]]);
                             break;
@@ -670,7 +674,7 @@ class Parser
                     function ($matches) use ($values) {
                         $transformer = isset($matches[3]) ? $matches[3] : '';
 
-                        switch($transformer) {
+                        switch ($transformer) {
                             case 'singularize':
                                 return Inflect::singularize($values[$matches[1]]);
                                 break;
