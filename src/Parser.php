@@ -11,6 +11,7 @@ use Raml\Schema\Parser\XmlSchemaParser;
 
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth1SecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParser\OAuth2SecuritySettingsParser;
+use Raml\SecurityScheme\SecuritySettingsParser\DefaultSecuritySettingsParser;
 use Raml\SecurityScheme\SecuritySettingsParserInterface;
 
 use Raml\FileLoader\DefaultFileLoader;
@@ -101,7 +102,8 @@ class Parser
         if ($securitySettingsParsers === null) {
             $securitySettingsParsers = [
                 new OAuth1SecuritySettingsParser(),
-                new OAuth2SecuritySettingsParser()
+                new OAuth2SecuritySettingsParser(),
+                new DefaultSecuritySettingsParser()
             ];
         }
 
@@ -337,9 +339,13 @@ class Parser
         $securitySchemes = [];
         foreach ($schemesArray as $securitySchemeData) {
             foreach ($securitySchemeData as $key => $securityScheme) {
-                if (isset($securityScheme['type']) && isset($this->securitySettingsParsers[$securityScheme['type']])) {
-                    $securitySchemes[$key] = $securityScheme;
-                    $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                if (isset($securityScheme['type'])) {
+                    if (isset($this->securitySettingsParsers[$securityScheme['type']])) {
+                        $securitySchemes[$key] = $securityScheme;
+                        $parser = $this->securitySettingsParsers[$securityScheme['type']];
+                    } else {
+                        $parser = $this->securitySettingsParsers['*'];
+                    }
                     $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
                 }
             }
