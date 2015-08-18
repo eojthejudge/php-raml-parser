@@ -660,7 +660,7 @@ class NamedParameter implements ArrayInstantiationInterface
         switch ($this->type) {
             case self::TYPE_STRING:
                 if (!is_string($default)) {
-                    throw new \Exception('Default parameter is not a string');
+                    $default = strval($default);
                 }
                 break;
             case self::TYPE_NUMBER:

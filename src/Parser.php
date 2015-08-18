@@ -341,12 +341,14 @@ class Parser
             foreach ($securitySchemeData as $key => $securityScheme) {
                 if (isset($securityScheme['type'])) {
                     if (isset($this->securitySettingsParsers[$securityScheme['type']])) {
-                        $securitySchemes[$key] = $securityScheme;
                         $parser = $this->securitySettingsParsers[$securityScheme['type']];
                     } else {
                         $parser = $this->securitySettingsParsers['*'];
                     }
-                    $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+                    $securitySchemes[$key] = $securityScheme;
+                    if (isset($securityScheme['settings'])) {
+                        $securitySchemes[$key]['settings'] = $parser->createSecuritySettings($securityScheme['settings']);
+                    } 
                 }
             }
         }
